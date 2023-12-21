@@ -13,8 +13,15 @@ from models.state import State
 from models.user import User
 import models
 
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
+classes = {
+    "Amenity": Amenity,
+    "BaseModel": BaseModel,
+    "City": City,
+    "Place": Place,
+    "Review": Review,
+    "State": State,
+    "User": User,
+}
 
 
 class FileStorage:
@@ -46,13 +53,13 @@ class FileStorage:
         json_objects = {}
         for key in self.__objects:
             json_objects[key] = self.__objects[key].to_dict()
-        with open(self.__file_path, 'w') as f:
+        with open(self.__file_path, "w") as f:
             json.dump(json_objects, f)
 
     def reload(self):
         """deserializes the JSON file to __objects"""
         try:
-            with open(self.__file_path, 'r') as f:
+            with open(self.__file_path, "r") as f:
                 jo = json.load(f)
             for key in jo:
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
@@ -62,7 +69,7 @@ class FileStorage:
     def delete(self, obj=None):
         """delete obj from __objects if it’s inside"""
         if obj is not None:
-            key = obj.__class__.__name__ + '.' + obj.id
+            key = obj.__class__.__name__ + "." + obj.id
             if key in self.__objects:
                 del self.__objects[key]
 
@@ -71,24 +78,24 @@ class FileStorage:
         self.reload()
 
     def get(self, cls, id):
-        '''
+        """
         Returns the object based on the class name and its ID, or None if not found
-        '''
+        """
         if cls not in classes.values():
             return None
 
         all_cls_objs = models.storage.all(cls)
         for value in all_cls_objs.values():
-            if (value.id == id):
+            if value.id == id:
                 return value
 
         return None
 
     def count(self, cls=None):
-        '''
+        """
         Returns the number of objects in storage matching the given class
         If no class is passed, returns the count of all objects in storage
-        '''
+        """
         if cls is None:
             return len(self.all())
         else:
